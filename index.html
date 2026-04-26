@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Heart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="heartCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let angle = 0;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        function drawHeart() {
+            ctx.clearRect(0, 0, width, height);
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const scale = Math.min(width, height) / 45;
+            const numSteps = 70;
+
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle * Math.PI / 180);
+            ctx.translate(-centerX, -centerY);
+
+            ctx.fillStyle = '#FF3399';
+
+            for (let i = 0; i < numSteps; i++) {
+                const t = i * (2 * Math.PI / numSteps);
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+
+                const posX = (x * scale) + centerX;
+                const posY = -(y * scale) + centerY;
+
+                const size = scale * 0.6;
+
+                ctx.beginPath();
+                ctx.arc(posX, posY, size / 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+
+            // Desenhar texto "I love you"
+            ctx.fillStyle = '#FF3399';
+            ctx.font = `bold ${Math.min(width, height) / 15}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('I love you', centerX, centerY);
+
+            angle += 0.8;
+            requestAnimationFrame(drawHeart);
+        }
+
+        drawHeart();
+    </script>
+</body>
+</html>
+
